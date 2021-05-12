@@ -6,12 +6,37 @@ import {
   Heading,
   Input,
   Link,
-  Text
+  Text,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from 'next/link'
+import { useForm, SubmitHandler } from "react-hook-form";
+import {useEffect} from "react";
+
+type LoginInputs = {
+  email: string,
+  password: string,
+}
 
 const Login = () => {
+  const { register, handleSubmit, watch, formState: { errors }, trigger } = useForm<LoginInputs>();
+
+  const onSubmit = (event) => {
+    event.preventDefault()
+    // trigger()
+
+    handleSubmit(() => {
+      console.log('submitting')
+    }, () => {
+      console.log("invalid")
+    })()
+  }
+
+  useEffect(() => {
+    console.log('errors', errors)
+  }, [errors])
+
   return (
      <>
        <Head>
@@ -26,22 +51,25 @@ const Login = () => {
            Log in to your account
          </Heading>
 
-         <FormControl maxW="24rem">
+           <FormControl maxW="24rem" isInvalid={errors && Object.keys(errors)?.length > 0}>
+             <form onSubmit={onSubmit}>
+               <Box mb={4}>
+                 <FormLabel>Email address</FormLabel>
+                 <Input type="email" placeholder="name@email.com" { ...register('email', { required: true }) } id="email" />
+                 {errors.email && <FormErrorMessage>This field is required</FormErrorMessage>}
+               </Box>
 
-           <Box mb={4}>
-             <FormLabel>Email address</FormLabel>
-             <Input type="email" placeholder="name@email.com" />
-           </Box>
+               <Box mb={12}>
+                 <FormLabel>Password</FormLabel>
+                 <Input type="password" placeholder="A super secure password I hope" { ...register('password', { required: true }) } id="password" />
+                 {errors.password && <FormErrorMessage>This field is required</FormErrorMessage>}
+               </Box>
 
-           <Box mb={12}>
-             <FormLabel>Password</FormLabel>
-             <Input type="password" placeholder="A super secure password I hope" />
-           </Box>
+               <Button w="100%" colorScheme="green" type="submit">Log in</Button>
 
-           <Button w="100%" colorScheme="green">Log in</Button>
-
-           <Text mt={8}>Don't have an account? <NextLink href="/sign-up"><Link style={{ color: "green" }}>Create one</Link></NextLink></Text>
-         </FormControl>
+               <Text mt={8}>Don't have an account? <NextLink href="/sign-up"><Link style={{ color: "green" }}>Create one</Link></NextLink></Text>
+             </form>
+           </FormControl>
        </Box>
      </>
   )
