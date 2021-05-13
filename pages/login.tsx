@@ -13,6 +13,10 @@ import Head from "next/head";
 import NextLink from 'next/link'
 import { useForm, SubmitHandler } from "react-hook-form";
 import {useEffect} from "react";
+import {useMutation} from "react-query";
+import {httpClient} from "../config/queryClient";
+import {Session} from "../interfaces/session";
+import {useRouter} from "next/router";
 
 type LoginInputs = {
   email: string,
@@ -21,13 +25,22 @@ type LoginInputs = {
 
 const Login = () => {
   const { register, handleSubmit, watch, formState: { errors }, trigger } = useForm<LoginInputs>();
+  const mutation = useMutation<{ data: Session }, unknown, { email: string; password: string }>(({ email, password }) => httpClient.post('sessions', { email, password }))
+  const router = useRouter()
 
   const onSubmit = (event) => {
     event.preventDefault()
-    // trigger()
+    trigger()
 
-    handleSubmit(() => {
-      console.log('submitting')
+    handleSubmit((event) => {
+      mutation.mutate(
+          { email: event?.email, password: event?.password },
+          {
+            onSuccess() {
+              router.push("/")
+            }
+          }
+      )
     }, () => {
       console.log("invalid")
     })()
@@ -65,7 +78,7 @@ const Login = () => {
                  {errors.password && <FormErrorMessage>This field is required</FormErrorMessage>}
                </Box>
 
-               <Button w="100%" colorScheme="green" type="submit">Log in</Button>
+               <Button w="100%" colorScheme="green" type="submit" isLoading={mutation.isLoading}>Log in</Button>
 
                <Text mt={8}>Don't have an account? <NextLink href="/sign-up"><Link style={{ color: "green" }}>Create one</Link></NextLink></Text>
              </form>
