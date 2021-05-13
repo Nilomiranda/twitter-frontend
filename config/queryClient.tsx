@@ -4,11 +4,13 @@ import Router from "next/router";
 
 export const httpClient = axios.create({
   baseURL: 'http://localhost:3000/',
+  withCredentials: true,
 })
 
 const defaultQueryFunction = async ({ queryKey }) => {
+  console.log('queryKey', queryKey)
   try {
-    const { data } = await httpClient.get(queryKey)
+    const { data } = await httpClient.get(typeof queryKey === 'object' ? queryKey[0] : queryKey)
     return data
   } catch (err) {
     if (err?.response?.status === 401) {

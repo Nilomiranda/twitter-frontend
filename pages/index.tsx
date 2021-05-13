@@ -12,5 +12,5 @@ export default function Home() {
     return <h2>Error loaading tweets</h2>
   }
 
-  return null
+  return data.tweets.map(tweet => tweet.text)
 }
