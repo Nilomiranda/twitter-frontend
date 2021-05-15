@@ -1,16 +1,25 @@
-import {useQuery} from "react-query";
-import {Tweet} from "../interfaces/tweet";
+import {prefetchSession} from "../services/session";
 
-export default function Home() {
-  const { data, error, isFetching } = useQuery<{ tweets: Tweet[] }>('tweets')
+export async function getServerSideProps({ req }) {
+  try {
+    await prefetchSession(req)
 
-  if (isFetching) {
-    return <h2>Loading...</h2>
+    return {
+      redirect: {
+        destination: '/home',
+        permanent: false,
+      }
+    }
+  } catch (err) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      }
+    }
   }
+}
 
-  if (error) {
-    return <h2>Error loaading tweets</h2>
-  }
-
-  return data.tweets.map(tweet => tweet.text)
+export default function Index() {
+  return null
 }

@@ -37,7 +37,7 @@ const Login = () => {
           { email: event?.email, password: event?.password },
           {
             onSuccess() {
-              router.push("/")
+              router.push("/home")
             }
           }
       )
