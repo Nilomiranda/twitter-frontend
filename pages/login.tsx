@@ -37,15 +37,17 @@ const Login = () => {
     event.preventDefault()
     trigger()
 
-    handleSubmit((event) => {
-      mutation.mutate(
-          { email: event?.email, password: event?.password },
-          {
-            onSuccess() {
-              router.push("/home")
-            }
-          }
-      )
+    handleSubmit(async (event) => {
+      const { email, password } = event || { email: '', password: '' }
+
+      try {
+        const loginResponse = await mutation.mutateAsync({ email, password })
+        if (loginResponse) {
+          router.push("/home")
+        }
+      } catch (err) {
+        console.error("DEBUG::ERROR:: Login error", err)
+      }
     }, () => {
       console.log("invalid")
     })()
