@@ -7,3 +7,11 @@ export const prefetchSession = async (req): Promise<AxiosResponse<{ user: User }
     headers: req?.headers
   })
 }
+
+export const signIn = async ({ email, password }: { email: string; password: string }) => {
+  return httpClient.post('sessions', { email, password })
+}
+
+export const signOut = async () => {
+  return httpClient.delete('sessions')
+}

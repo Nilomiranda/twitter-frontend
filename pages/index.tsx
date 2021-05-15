@@ -1,23 +1,7 @@
-import {prefetchSession} from "../services/session";
+import {authGuard} from "../guards/auth";
 
 export async function getServerSideProps({ req }) {
-  try {
-    await prefetchSession(req)
-
-    return {
-      redirect: {
-        destination: '/home',
-        permanent: false,
-      }
-    }
-  } catch (err) {
-    return {
-      redirect: {
-        destination: '/login',
-        permanent: false,
-      }
-    }
-  }
+  return authGuard(req)
 }
 
 export default function Index() {

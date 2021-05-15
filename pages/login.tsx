@@ -11,21 +11,26 @@ import {
 } from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from 'next/link'
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {useEffect} from "react";
 import {useMutation} from "react-query";
-import {httpClient} from "../config/queryClient";
 import {Session} from "../interfaces/session";
 import {useRouter} from "next/router";
+import {authGuard} from "../guards/auth";
+import {signIn} from "../services/session";
 
 type LoginInputs = {
   email: string,
   password: string,
 }
 
+export async function getServerSideProps({ req }) {
+  return authGuard(req)
+}
+
 const Login = () => {
   const { register, handleSubmit, watch, formState: { errors }, trigger } = useForm<LoginInputs>();
-  const mutation = useMutation<{ data: Session }, unknown, { email: string; password: string }>(({ email, password }) => httpClient.post('sessions', { email, password }))
+  const mutation = useMutation<{ data: Session }, unknown, { email: string; password: string }>(({ email, password }) => signIn({ email, password }))
   const router = useRouter()
 
   const onSubmit = (event) => {

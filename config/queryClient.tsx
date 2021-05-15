@@ -8,7 +8,6 @@ export const httpClient = axios.create({
 })
 
 const defaultQueryFunction = async ({ queryKey }) => {
-  console.log('queryKey', queryKey)
   try {
     const { data } = await httpClient.get(typeof queryKey === 'object' ? queryKey[0] : queryKey)
     return data
