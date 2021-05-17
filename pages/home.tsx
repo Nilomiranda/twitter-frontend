@@ -1,7 +1,7 @@
-import {useMutation, useQuery} from "react-query";
-import {Tweet} from "../interfaces/tweet";
-import {signOut} from "../services/session";
-import {useRouter} from "next/router";
+import { useMutation, useQuery } from 'react-query'
+import { useRouter } from 'next/router'
+import { Tweet } from '../interfaces/tweet'
+import { signOut } from '../services/session'
 
 export default function Home() {
   const { data, error, isFetching } = useQuery<{ feed: Tweet[] }>('feed')
@@ -27,15 +27,19 @@ export default function Home() {
   }
 
   return (
-      <>
-        <button onClick={handleSignOutClick}>Sign out</button>
-        <hr />
-        <br />
-        <br />
-        <br />
-        <ul>
-          { data.feed.map(tweet => <li>{tweet.text}</li>)  }
-        </ul>
-      </>
+    <>
+      <button onClick={handleSignOutClick} type="button">
+        Sign out
+      </button>
+      <hr />
+      <br />
+      <br />
+      <br />
+      <ul>
+        {data.feed.map((tweet) => (
+          <li>{tweet.text}</li>
+        ))}
+      </ul>
+    </>
   )
 }

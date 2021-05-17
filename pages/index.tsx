@@ -1,4 +1,4 @@
-import {authGuard} from "../guards/auth";
+import { authGuard } from '../guards/auth'
 
 export async function getServerSideProps({ req }) {
   return authGuard(req)

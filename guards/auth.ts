@@ -1,4 +1,4 @@
-import {prefetchSession} from "../services/session";
+import { prefetchSession } from '../services/session'
 
 export const authGuard = async (req) => {
   try {
@@ -8,14 +8,14 @@ export const authGuard = async (req) => {
       redirect: {
         destination: '/home',
         permanent: false,
-      }
+      },
     }
   } catch (err) {
     return {
       redirect: {
         destination: '/login',
         permanent: false,
-      }
+      },
     }
   }
 }

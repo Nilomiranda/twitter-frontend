@@ -1,6 +1,6 @@
-import {Base} from "./base";
+import { Base } from './base'
 
 export interface User extends Base {
-  email: string;
-  nickname: string;
+  email: string
+  nickname: string
 }

@@ -1,6 +1,6 @@
-import {User} from "./user";
+import { User } from './user'
 
 export interface Session {
-  token: string;
+  token: string
   user: User
 }
