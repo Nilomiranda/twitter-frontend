@@ -7,6 +7,7 @@ import {
   Input,
   Text,
   FormErrorMessage,
+  useToast,
 } from '@chakra-ui/react'
 import Head from 'next/head'
 import NextLink from 'next/link'
@@ -17,6 +18,8 @@ import { useRouter } from 'next/router'
 import { Session } from '../interfaces/session'
 import { authGuard } from '../guards/auth'
 import { signIn } from '../services/session'
+
+import { TOAST_DEFAULT_DURATION } from '../config/constants'
 
 type LoginInputs = {
   email: string
@@ -29,6 +32,7 @@ export async function getServerSideProps({ req }) {
 }
 
 const Login = () => {
+  const toast = useToast()
   const {
     register,
     handleSubmit,
@@ -66,6 +70,15 @@ const Login = () => {
             router.push('/home')
           }
         } catch (err) {
+          toast({
+            title: "Couldn't sign in",
+            description:
+              err?.response?.data?.errors ||
+              'An unexpected error occurred. Please try again later',
+            status: 'error',
+            duration: TOAST_DEFAULT_DURATION,
+            isClosable: true,
+          })
           console.error('DEBUG::ERROR:: Login error', err)
         }
       },
