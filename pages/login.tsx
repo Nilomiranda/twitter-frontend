@@ -21,6 +21,7 @@ import { signIn } from '../services/session'
 type LoginInputs = {
   email: string
   password: string
+  nickname: string
 }
 
 export async function getServerSideProps({ req }) {
@@ -33,12 +34,14 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
     trigger,
+    getValues,
+    watch,
   } = useForm<LoginInputs>()
   const mutation = useMutation<
     { data: Session },
     unknown,
-    { email: string; password: string }
-  >(({ email, password }) => signIn({ email, password }))
+    { email: string; password: string; nickname: string }
+  >(({ email, password, nickname }) => signIn({ email, password, nickname }))
   const router = useRouter()
 
   const onSubmit = (event) => {
@@ -47,10 +50,18 @@ const Login = () => {
 
     handleSubmit(
       async (submitEvent) => {
-        const { email, password } = submitEvent || { email: '', password: '' }
+        const { email, password, nickname } = submitEvent || {
+          email: '',
+          password: '',
+          nickname: '',
+        }
 
         try {
-          const loginResponse = await mutation.mutateAsync({ email, password })
+          const loginResponse = await mutation.mutateAsync({
+            email,
+            password,
+            nickname,
+          })
           if (loginResponse) {
             router.push('/home')
           }
@@ -99,10 +110,60 @@ const Login = () => {
               <Input
                 type="email"
                 placeholder="name@email.com"
-                {...register('email', { required: true })}
+                {...register('email', {
+                  validate: (email) => {
+                    const nickname = getValues('nickname')
+                    if (nickname || email) {
+                      return true
+                    }
+                    if (!nickname && !email) {
+                      return false
+                    }
+                  },
+                })}
+                disabled={!!watch('nickname')}
                 id="email"
               />
               {errors.email && (
+                <FormErrorMessage>This field is required</FormErrorMessage>
+              )}
+            </Box>
+
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              w="100%"
+              mb={4}
+              mt={8}
+            >
+              <Box flex={1} border="1px" borderColor="gray.200" />
+              <Text fontSize="sm" textAlign="center" px="1rem">
+                Or
+              </Text>
+              <Box flex={1} border="1px" borderColor="gray.200" />
+            </Box>
+
+            <Box mb={4}>
+              <FormLabel>Nickname</FormLabel>
+              <Input
+                type="text"
+                placeholder="Your funny nickname"
+                {...register('nickname', {
+                  validate: (nickname) => {
+                    const email = getValues('email')
+                    if (!email && !nickname) {
+                      return false
+                    }
+                    if (nickname || email) {
+                      return true
+                    }
+                  },
+                })}
+                disabled={!!watch('email')}
+                id="nickname"
+              />
+              {errors.nickname && (
                 <FormErrorMessage>This field is required</FormErrorMessage>
               )}
             </Box>
