@@ -1,6 +1,6 @@
 import { prefetchSession } from '../services/session'
 
-export const authGuard = async (req) => {
+export const authGuard = async (req, redirectToLogin = true) => {
   try {
     await prefetchSession(req)
 
@@ -11,11 +11,15 @@ export const authGuard = async (req) => {
       },
     }
   } catch (err) {
-    return {
-      redirect: {
-        destination: '/login',
-        permanent: false,
-      },
+    if (redirectToLogin) {
+      return {
+        redirect: {
+          destination: '/login',
+          permanent: false,
+        },
+      }
     }
+
+    return { props: {} }
   }
 }

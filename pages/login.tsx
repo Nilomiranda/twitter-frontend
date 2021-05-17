@@ -24,7 +24,7 @@ type LoginInputs = {
 }
 
 export async function getServerSideProps({ req }) {
-  return authGuard(req)
+  return authGuard(req, false)
 }
 
 const Login = () => {
