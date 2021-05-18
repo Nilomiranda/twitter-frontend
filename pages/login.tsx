@@ -1,14 +1,4 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  FormLabel,
-  Heading,
-  Input,
-  Text,
-  FormErrorMessage,
-  useToast,
-} from '@chakra-ui/react'
+import { Box, Button, FormControl, FormLabel, Heading, Input, Text, FormErrorMessage, useToast } from '@chakra-ui/react'
 import Head from 'next/head'
 import NextLink from 'next/link'
 import { useForm } from 'react-hook-form'
@@ -20,6 +10,7 @@ import { authGuard } from '../guards/auth'
 import { signIn } from '../services/session'
 
 import { TOAST_DEFAULT_DURATION } from '../config/constants'
+import { translateErrors } from '../utils/translateErrors'
 
 type LoginInputs = {
   email: string
@@ -41,11 +32,7 @@ const Login = () => {
     getValues,
     watch,
   } = useForm<LoginInputs>()
-  const mutation = useMutation<
-    { data: Session },
-    unknown,
-    { email: string; password: string; nickname: string }
-  >(({ email, password, nickname }) => signIn({ email, password, nickname }))
+  const mutation = useMutation<{ data: Session }, unknown, { email: string; password: string; nickname: string }>(({ email, password, nickname }) => signIn({ email, password, nickname }))
   const router = useRouter()
 
   const onSubmit = (event) => {
@@ -72,9 +59,7 @@ const Login = () => {
         } catch (err) {
           toast({
             title: "Couldn't sign in",
-            description:
-              err?.response?.data?.errors ||
-              'An unexpected error occurred. Please try again later',
+            description: translateErrors(err?.response?.data?.errors) || 'An unexpected error occurred. Please try again later',
             status: 'error',
             duration: TOAST_DEFAULT_DURATION,
             isClosable: true,
@@ -98,14 +83,7 @@ const Login = () => {
         <title>Login</title>
       </Head>
 
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        flexDirection="column"
-        h="100vh"
-        w="100%"
-      >
+      <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column" h="100vh" w="100%">
         <Heading as="h1" size="4xl" isTruncated mb={4}>
           Chist
         </Heading>
@@ -113,10 +91,7 @@ const Login = () => {
           Log in to your account
         </Heading>
 
-        <FormControl
-          maxW="24rem"
-          isInvalid={errors && Object.keys(errors)?.length > 0}
-        >
+        <FormControl maxW="24rem" isInvalid={errors && Object.keys(errors)?.length > 0}>
           <form onSubmit={onSubmit}>
             <Box mb={4}>
               <FormLabel>Email address</FormLabel>
@@ -137,19 +112,10 @@ const Login = () => {
                 disabled={!!watch('nickname')}
                 id="email"
               />
-              {errors.email && (
-                <FormErrorMessage>This field is required</FormErrorMessage>
-              )}
+              {errors.email && <FormErrorMessage>This field is required</FormErrorMessage>}
             </Box>
 
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              w="100%"
-              mb={4}
-              mt={8}
-            >
+            <Box display="flex" alignItems="center" justifyContent="center" w="100%" mb={4} mt={8}>
               <Box flex={1} border="1px" borderColor="gray.200" />
               <Text fontSize="sm" textAlign="center" px="1rem">
                 Or
@@ -176,36 +142,21 @@ const Login = () => {
                 disabled={!!watch('email')}
                 id="nickname"
               />
-              {errors.nickname && (
-                <FormErrorMessage>This field is required</FormErrorMessage>
-              )}
+              {errors.nickname && <FormErrorMessage>This field is required</FormErrorMessage>}
             </Box>
 
             <Box mb={12}>
               <FormLabel>Password</FormLabel>
-              <Input
-                type="password"
-                placeholder="A super secure password I hope"
-                {...register('password', { required: true })}
-                id="password"
-              />
-              {errors.password && (
-                <FormErrorMessage>This field is required</FormErrorMessage>
-              )}
+              <Input type="password" placeholder="A super secure password I hope" {...register('password', { required: true })} id="password" />
+              {errors.password && <FormErrorMessage>This field is required</FormErrorMessage>}
             </Box>
 
-            <Button
-              w="100%"
-              colorScheme="green"
-              type="submit"
-              isLoading={mutation.isLoading}
-            >
+            <Button w="100%" colorScheme="green" type="submit" isLoading={mutation.isLoading}>
               Log in
             </Button>
 
             <Text mt={8}>
-              Don't have an account?{' '}
-              <NextLink href="/sign-up">Create one</NextLink>
+              Don't have an account? <NextLink href="/sign-up">Create one</NextLink>
             </Text>
           </form>
         </FormControl>

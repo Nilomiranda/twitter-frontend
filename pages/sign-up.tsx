@@ -1,67 +1,150 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  FormLabel,
-  Heading,
-  Input,
-  Text,
-} from '@chakra-ui/react'
+import { Box, Button, FormControl, FormErrorMessage, FormLabel, Heading, Input, Text, useToast } from '@chakra-ui/react'
 import Head from 'next/head'
 import NextLink from 'next/link'
+import { useMutation } from 'react-query'
+import { useForm } from 'react-hook-form'
+import { useRouter } from 'next/router'
+import { authGuard } from '../guards/auth'
+import { createUser, SignUpPayload } from '../services/user'
+import { User } from '../interfaces/user'
+import { TOAST_DEFAULT_DURATION } from '../config/constants'
+import { translateErrors } from '../utils/translateErrors'
+import { Session } from '../interfaces/session'
+import { signIn } from '../services/session'
 
-const Login = () => (
-  <>
-    <Head>
-      <title>Sign up</title>
-    </Head>
+type SignUpInputs = {
+  email: string
+  nickname: string
+  password: string
+  confirmPassword
+}
 
-    <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      flexDirection="column"
-      h="100vh"
-      w="100%"
-    >
-      <Heading as="h1" size="4xl" isTruncated mb={4}>
-        Chist
-      </Heading>
+export async function getServerSideProps({ req }) {
+  return authGuard(req, false)
+}
 
-      <Heading as="h2" size="sm" fontWeight="normal" isTruncated mb={16}>
-        Create an account
-      </Heading>
+const SignUp = () => {
+  const toast = useToast()
 
-      <FormControl maxW="24rem">
-        <Box mb={4}>
-          <FormLabel>Email address</FormLabel>
-          <Input type="email" placeholder="Your coolest email" />
-        </Box>
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    trigger,
+    getValues,
+  } = useForm<SignUpInputs>()
+  const router = useRouter()
 
-        <Box mb={4}>
-          <FormLabel>Password</FormLabel>
-          <Input
-            type="password"
-            placeholder="Choose a super powerful password"
-          />
-        </Box>
+  const mutation = useMutation<{ data: { user: User } }, unknown, SignUpPayload>((payload) => createUser(payload))
+  const sessionMutation = useMutation<{ data: Session }, unknown, { email: string; password: string; nickname: string }>(({ email, password, nickname }) => signIn({ email, password, nickname }))
 
-        <Box mb={12}>
-          <FormLabel>Confirm password</FormLabel>
-          <Input type="password" placeholder="Confirm the super password" />
-        </Box>
+  const handleAccountCreated = async ({ email, nickname, password }) => {
+    try {
+      const loginResponse = await sessionMutation.mutateAsync({
+        email,
+        password,
+        nickname,
+      })
+      if (loginResponse) {
+        router.push('/home')
+      }
+    } catch (err) {
+      console.error('ERROR:: Error when creating session after account creation', err)
+      router.push('/login')
+    }
+  }
 
-        <Button w="100%" colorScheme="green">
-          Create account
-        </Button>
+  const onSubmit = (event) => {
+    console.log('handling submit')
+    event.preventDefault()
+    trigger()
 
-        <Text mt={8}>
-          Already have an account?{' '}
-          <NextLink href="/login">Log in then</NextLink>
-        </Text>
-      </FormControl>
-    </Box>
-  </>
-)
+    handleSubmit(
+      async (submitEvent) => {
+        try {
+          const createdAccount = await mutation?.mutateAsync(submitEvent)
+          if (createdAccount) {
+            handleAccountCreated(submitEvent)
+          }
+        } catch (err) {
+          toast({
+            title: "Couldn't create account",
+            description: translateErrors(err?.response?.data?.errors) || 'An unexpected error occurred. Please try again later',
+            status: 'error',
+            duration: TOAST_DEFAULT_DURATION,
+            isClosable: true,
+          })
+          console.error('DEBUG::ERROR:: Login error', err)
+        }
+      },
+      () => {
+        console.log('invalid')
+      }
+    )()
+  }
 
-export default Login
+  return (
+    <>
+      <Head>
+        <title>Sign up</title>
+      </Head>
+
+      <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column" h="100vh" w="100%">
+        <Heading as="h1" size="4xl" isTruncated mb={4}>
+          Chist
+        </Heading>
+
+        <Heading as="h2" size="sm" fontWeight="normal" isTruncated mb={16}>
+          Create an account
+        </Heading>
+
+        <FormControl maxW="24rem" isInvalid={errors && Object.keys(errors)?.length > 0}>
+          <form onSubmit={onSubmit}>
+            <Box mb={4}>
+              <FormLabel>Email address</FormLabel>
+              <Input type="email" placeholder="Your coolest email" {...register('email', { required: true })} />
+              {errors.email && <FormErrorMessage>This field is required</FormErrorMessage>}
+            </Box>
+
+            <Box mb={4}>
+              <FormLabel>Email address</FormLabel>
+              <Input type="text" placeholder="A creative nickname" {...register('nickname', { required: true })} />
+              {errors.nickname && <FormErrorMessage>This field is required</FormErrorMessage>}
+            </Box>
+
+            <Box mb={4}>
+              <FormLabel>Password</FormLabel>
+              <Input type="password" placeholder="Choose a super powerful password" {...register('password', { required: true })} />
+              {errors.password && <FormErrorMessage>This field is required</FormErrorMessage>}
+            </Box>
+
+            <Box mb={12}>
+              <FormLabel>Confirm password</FormLabel>
+              <Input
+                type="password"
+                placeholder="Confirm the super password"
+                {...register('confirmPassword', {
+                  validate(confirmPassword: string) {
+                    const password = getValues('password')
+                    return (password && password === confirmPassword) || 'Confirm password must match with password'
+                  },
+                })}
+              />
+              {errors.confirmPassword && <FormErrorMessage>{errors.confirmPassword?.message}</FormErrorMessage>}
+            </Box>
+
+            <Button w="100%" colorScheme="green" type="submit">
+              Create account
+            </Button>
+
+            <Text mt={8}>
+              Already have an account? <NextLink href="/login">Log in then</NextLink>
+            </Text>
+          </form>
+        </FormControl>
+      </Box>
+    </>
+  )
+}
+
+export default SignUp
