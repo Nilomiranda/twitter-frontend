@@ -13,7 +13,7 @@ const PublicationList = () => {
   return (
     <ul>
       {data?.feed?.map((publication) => (
-        <Box mb={4}>
+        <Box mb={4} key={publication?.id}>
           <PublicationCard publication={publication} loading={isFetching} />
         </Box>
       ))}
