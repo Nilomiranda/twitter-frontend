@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { Box, Flex } from '@chakra-ui/react'
 import { signOut } from '../services/session'
 import Feed from '../components/home/Feed'
+import SearchBox from '../components/search/SearchBox'
 
 export default function Home() {
   const router = useRouter()
@@ -28,12 +29,14 @@ export default function Home() {
       <br />
       <br />
 
-      <Flex w="100%" height="100%" justifyContent="center" alignItems="center">
+      <Flex w="100%" height="100%" justifyContent="center" alignItems="flex-start">
         <Box w="25%" />
         <Flex w="35%" maxWidth="80rem" borderRight="1px" borderLeft="1px" borderColor="gray.200" px={12}>
           <Feed />
         </Flex>
-        <Box w="25%" />
+        <Box w="25%" ml={12}>
+          <SearchBox />
+        </Box>
       </Flex>
     </Flex>
   )
