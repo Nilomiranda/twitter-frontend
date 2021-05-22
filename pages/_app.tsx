@@ -2,13 +2,16 @@ import '../styles/globals.css'
 import { QueryClientProvider } from 'react-query'
 import { ChakraProvider } from '@chakra-ui/react'
 import { queryClient } from '../config/queryClient'
+import UserProvider from '../contexts/CurrentUser'
 
 function MyApp({ Component, pageProps }) {
   return (
     <QueryClientProvider client={queryClient}>
-      <ChakraProvider>
-        <Component {...pageProps} />
-      </ChakraProvider>
+      <UserProvider>
+        <ChakraProvider>
+          <Component {...pageProps} />
+        </ChakraProvider>
+      </UserProvider>
     </QueryClientProvider>
   )
 }

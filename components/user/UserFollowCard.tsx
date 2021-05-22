@@ -31,6 +31,7 @@ const UserFollowCard = ({ user }: UserFollowCardProps) => {
       }
       refetch()
       queryClient?.refetchQueries('feed')
+      queryClient?.refetchQueries('sessions')
     } catch (err) {
       console.error('ERROR:: Could not follow or unfollow user', err)
     }
@@ -40,7 +41,7 @@ const UserFollowCard = ({ user }: UserFollowCardProps) => {
     <Flex direction="row" justifyContent="space-between" w="100%">
       <UserHeader user={user} />
       {userData?.user?.id !== user?.id ? (
-        <Button colorScheme="green" onClick={handleToggleFollowClick}>
+        <Button colorScheme={followingData?.following ? null : 'green'} onClick={handleToggleFollowClick}>
           {followingData?.following ? 'Unfollow' : 'Follow'}
         </Button>
       ) : null}
