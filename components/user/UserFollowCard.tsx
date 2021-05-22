@@ -1,17 +1,19 @@
 import { Button, Flex } from '@chakra-ui/react'
 import { useMutation, useQuery } from 'react-query'
+import { useContext } from 'react'
 import { User } from '../../interfaces/user'
 import UserHeader from './UserHeader'
 import { followUser, unfollowUser } from '../../services/follow'
 import { queryClient } from '../../config/queryClient'
+import { UserContext } from '../../contexts/CurrentUser'
 
 interface UserFollowCardProps {
   user: User
 }
 
 const UserFollowCard = ({ user }: UserFollowCardProps) => {
-  const { data: userData } = useQuery<{ user: User }>('sessions')
-  const { data: followingData, refetch } = useQuery<{ following: boolean }>(`following/${userData?.user?.id}/following?id=${user?.id}`, { enabled: !!userData?.user?.id && !!user?.id })
+  const userContext = useContext(UserContext)
+  const { data: followingData, refetch } = useQuery<{ following: boolean }>(`following/${userContext?.user?.id}/following?id=${user?.id}`, { enabled: !!userContext?.user?.id && !!user?.id })
 
   const followMutation = useMutation(() => followUser(user?.id))
   const unfollowMutation = useMutation(() => unfollowUser(user?.id))
@@ -40,7 +42,7 @@ const UserFollowCard = ({ user }: UserFollowCardProps) => {
   return (
     <Flex direction="row" justifyContent="space-between" w="100%">
       <UserHeader user={user} />
-      {userData?.user?.id !== user?.id ? (
+      {userContext?.user?.id !== user?.id ? (
         <Button colorScheme={followingData?.following ? null : 'green'} onClick={handleToggleFollowClick}>
           {followingData?.following ? 'Unfollow' : 'Follow'}
         </Button>

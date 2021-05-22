@@ -1,13 +1,13 @@
 import { Flex, Skeleton, IconButton, useToast, Box } from '@chakra-ui/react'
 import { DeleteIcon } from '@chakra-ui/icons'
-import { useQuery } from 'react-query'
+import { useContext } from 'react'
 import { Tweet } from '../../interfaces/tweet'
-import { User } from '../../interfaces/user'
 import { deletePublication } from '../../services/publication'
 import { translateErrors } from '../../utils/translateErrors'
 import { TOAST_DEFAULT_DURATION } from '../../config/constants'
 import { queryClient } from '../../config/queryClient'
 import UserHeader from '../user/UserHeader'
+import { UserContext } from '../../contexts/CurrentUser'
 
 interface PublicationCardProps {
   loading: boolean
@@ -16,7 +16,7 @@ interface PublicationCardProps {
 
 const PublicationCard = ({ publication, loading }: PublicationCardProps) => {
   const toast = useToast()
-  const { data } = useQuery<{ user: User }>('sessions')
+  const userContext = useContext(UserContext)
 
   const handleDeletionSuccess = () => {
     toast({
@@ -65,7 +65,7 @@ const PublicationCard = ({ publication, loading }: PublicationCardProps) => {
       </Flex>
       {loading ? <Skeleton height="1.25rem" /> : <p>{publication?.text}</p>}
 
-      {data?.user?.id === publication?.user?.id ? (
+      {userContext?.user?.id === publication?.user?.id ? (
         <IconButton onClick={handleDeleteClick} aria-label="Delete publication" title="Delete publication" variant="ghost" alignSelf="flex-end" colorScheme="red" icon={<DeleteIcon />} />
       ) : null}
     </Flex>
