@@ -11,6 +11,7 @@ import { TOAST_DEFAULT_DURATION } from '../config/constants'
 import { translateErrors } from '../utils/translateErrors'
 import { Session } from '../interfaces/session'
 import { signIn } from '../services/session'
+import { queryClient } from '../config/queryClient'
 
 type SignUpInputs = {
   email: string
@@ -46,6 +47,7 @@ const SignUp = () => {
         nickname,
       })
       if (loginResponse) {
+        await queryClient.refetchQueries('sessions')
         router.push('/home')
       }
     } catch (err) {
