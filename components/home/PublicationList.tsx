@@ -6,7 +6,7 @@ import PublicationCard from './PublicationCard'
 
 const PublicationList = () => {
   const router = useRouter()
-  const { id: userId } = router?.query
+  const { userId } = router?.query
   const { data, error, isFetching } = useQuery<{ feed: Tweet[] }>(userId ? `feed?user_id=${userId}` : 'feed')
 
   if (error) {
