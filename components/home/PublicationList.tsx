@@ -1,10 +1,13 @@
 import { useQuery } from 'react-query'
 import { Box } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 import { Tweet } from '../../interfaces/tweet'
 import PublicationCard from './PublicationCard'
 
 const PublicationList = () => {
-  const { data, error, isFetching } = useQuery<{ feed: Tweet[] }>('feed')
+  const router = useRouter()
+  const { id: userId } = router?.query
+  const { data, error, isFetching } = useQuery<{ feed: Tweet[] }>(userId ? `feed?user_id=${userId}` : 'feed')
 
   if (error) {
     return <h2>Error loaading tweets</h2>

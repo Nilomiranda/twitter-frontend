@@ -8,7 +8,7 @@ const MainLayout = ({ children }) => (
       <Box w="25%">
         <UserProfileInfo />
       </Box>
-      <Flex w="35%" maxWidth="80rem" borderRight="1px" borderLeft="1px" borderColor="gray.200" px={12}>
+      <Flex w="35%" direction="column" alignItems="stretch" maxWidth="80rem" borderRight="1px" borderLeft="1px" borderColor="gray.200" px={12}>
         {children}
       </Flex>
       <Box w="25%" ml={12}>
