@@ -3,7 +3,7 @@ import { QueryClient } from 'react-query'
 import Router from 'next/router'
 
 export const httpClient = axios.create({
-  baseURL: 'http://localhost:3000/',
+  baseURL: process.env.API_URL || 'http://localhost:3000/',
   withCredentials: true,
 })
 
