@@ -1,0 +1,41 @@
+import { Box, FormErrorMessage, FormLabel, forwardRef, Input as ChakraInput } from '@chakra-ui/react'
+import { FieldErrors } from 'react-hook-form'
+
+interface InputProps {
+  label?: string
+  placeholder?: string
+  errors?: string | FieldErrors
+  value?: string
+  // eslint-disable-next-line no-unused-vars
+  onChange?: (event) => void | null
+  type?: string
+  disabled?: boolean
+  id?: string
+  className?: string
+}
+
+const Input = forwardRef(({ label, placeholder, errors, value, onChange, type, id, className, disabled, ...props }: InputProps, ref) => (
+  <Box>
+    {label ? <FormLabel>{label}</FormLabel> : null}
+    {!value ? (
+      <ChakraInput data-what="not-controlled" ref={ref} type={type} placeholder={placeholder} disabled={disabled} id={id} className={className} {...props} />
+    ) : (
+      <ChakraInput data-what="controlled" ref={ref} type={type} placeholder={placeholder} disabled={disabled} id={id} className={className} value={value} onChange={onChange} />
+    )}
+    {errors && <FormErrorMessage>{errors}</FormErrorMessage>}
+  </Box>
+))
+
+Input.defaultProps = {
+  label: '',
+  placeholder: '',
+  errors: '',
+  value: '',
+  onChange: null,
+  type: 'text',
+  disabled: false,
+  id: '',
+  className: '',
+}
+
+export default Input

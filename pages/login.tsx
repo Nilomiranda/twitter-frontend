@@ -1,10 +1,11 @@
-import { Box, Button, FormControl, FormLabel, Heading, Input, Text, FormErrorMessage, useToast } from '@chakra-ui/react'
+import { Box, Button, FormControl, Heading, Text, useToast } from '@chakra-ui/react'
 import Head from 'next/head'
 import NextLink from 'next/link'
 import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 import { useMutation } from 'react-query'
 import { useRouter } from 'next/router'
+import Input from '../components/form/Input'
 import { Session } from '../interfaces/session'
 import { authGuard } from '../guards/auth'
 import { signIn } from '../services/session'
@@ -96,10 +97,13 @@ const Login = () => {
         <FormControl maxW="24rem" isInvalid={errors && Object.keys(errors)?.length > 0}>
           <form onSubmit={onSubmit}>
             <Box mb={4}>
-              <FormLabel>Email address</FormLabel>
               <Input
+                label="Your email"
                 type="email"
-                placeholder="name@email.com"
+                placeholder="A nice email"
+                disabled={!!watch('nickname')}
+                id="email"
+                errors={errors.email && 'This field is required'}
                 {...register('email', {
                   validate: (email) => {
                     const nickname = getValues('nickname')
@@ -111,10 +115,7 @@ const Login = () => {
                     }
                   },
                 })}
-                disabled={!!watch('nickname')}
-                id="email"
               />
-              {errors.email && <FormErrorMessage>This field is required</FormErrorMessage>}
             </Box>
 
             <Box display="flex" alignItems="center" justifyContent="center" w="100%" mb={4} mt={8}>
@@ -126,10 +127,13 @@ const Login = () => {
             </Box>
 
             <Box mb={4}>
-              <FormLabel>Nickname</FormLabel>
               <Input
-                type="text"
+                label="Nickname"
                 placeholder="Your funny nickname"
+                disabled={!!watch('email')}
+                type="text"
+                id="nickname"
+                errors={errors?.nickname && 'This field is required'}
                 {...register('nickname', {
                   validate: (nickname) => {
                     const email = getValues('email')
@@ -141,16 +145,18 @@ const Login = () => {
                     }
                   },
                 })}
-                disabled={!!watch('email')}
-                id="nickname"
               />
-              {errors.nickname && <FormErrorMessage>This field is required</FormErrorMessage>}
             </Box>
 
             <Box mb={12}>
-              <FormLabel>Password</FormLabel>
-              <Input type="password" placeholder="A super secure password I hope" {...register('password', { required: true })} id="password" />
-              {errors.password && <FormErrorMessage>This field is required</FormErrorMessage>}
+              <Input
+                label="Password"
+                placeholder="A super secure password I hope"
+                type="password"
+                id="password"
+                errors={errors?.password && 'This field is required'}
+                {...register('password', { required: true })}
+              />
             </Box>
 
             <Button w="100%" colorScheme="green" type="submit" isLoading={mutation.isLoading}>

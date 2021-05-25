@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, FormErrorMessage, FormLabel, Heading, Input, Text, useToast } from '@chakra-ui/react'
+import { Box, Button, FormControl, Heading, Text, useToast } from '@chakra-ui/react'
 import Head from 'next/head'
 import NextLink from 'next/link'
 import { useMutation } from 'react-query'
@@ -12,6 +12,7 @@ import { translateErrors } from '../utils/translateErrors'
 import { Session } from '../interfaces/session'
 import { signIn } from '../services/session'
 import { queryClient } from '../config/queryClient'
+import Input from '../components/form/Input'
 
 type SignUpInputs = {
   email: string
@@ -103,26 +104,26 @@ const SignUp = () => {
         <FormControl maxW="24rem" isInvalid={errors && Object.keys(errors)?.length > 0}>
           <form onSubmit={onSubmit}>
             <Box mb={4}>
-              <FormLabel>Email address</FormLabel>
-              <Input type="email" placeholder="Your coolest email" {...register('email', { required: true })} />
-              {errors.email && <FormErrorMessage>This field is required</FormErrorMessage>}
+              <Input type="email" placeholder="Your coolest email" {...register('email', { required: true })} label="Email address" errors={errors?.email && 'This field is required'} />
             </Box>
 
             <Box mb={4}>
-              <FormLabel>Email address</FormLabel>
-              <Input type="text" placeholder="A creative nickname" {...register('nickname', { required: true })} />
-              {errors.nickname && <FormErrorMessage>This field is required</FormErrorMessage>}
+              <Input label="Nickname" type="text" placeholder="A creative nickname" {...register('nickname', { required: true })} errors={errors?.nickname && 'This field is required'} />
             </Box>
 
             <Box mb={4}>
-              <FormLabel>Password</FormLabel>
-              <Input type="password" placeholder="Choose a super powerful password" {...register('password', { required: true })} />
-              {errors.password && <FormErrorMessage>This field is required</FormErrorMessage>}
+              <Input
+                label="Password"
+                type="password"
+                placeholder="Choose a super powerful password"
+                {...register('password', { required: true })}
+                errors={errors?.password && 'This field is required'}
+              />
             </Box>
 
             <Box mb={12}>
-              <FormLabel>Confirm password</FormLabel>
               <Input
+                label="Confirm password"
                 type="password"
                 placeholder="Confirm the super password"
                 {...register('confirmPassword', {
@@ -131,8 +132,8 @@ const SignUp = () => {
                     return (password && password === confirmPassword) || 'Confirm password must match with password'
                   },
                 })}
+                errors={errors?.confirmPassword?.message}
               />
-              {errors.confirmPassword && <FormErrorMessage>{errors.confirmPassword?.message}</FormErrorMessage>}
             </Box>
 
             <Button w="100%" colorScheme="green" type="submit">
