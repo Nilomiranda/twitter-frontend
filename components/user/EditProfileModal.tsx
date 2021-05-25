@@ -5,7 +5,7 @@ import { UserContext } from '../../contexts/CurrentUser'
 import { deleteProfilePicture, updateUserProfile } from '../../services/user'
 import { TOAST_DEFAULT_DURATION } from '../../config/constants'
 import { queryClient } from '../../config/queryClient'
-import { upload } from '../../services/upload'
+import { uploadMedia } from '../../services/uploadMedia'
 import { User } from '../../interfaces/user'
 import { convertBlobTo64 } from '../../utils/blobTo64'
 import EditUserForm from './EditUserForm'
@@ -58,7 +58,7 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
     const updatedUser: User = { ...userContext?.user }
     if (profilePictureFile) {
       try {
-        const profilePictureUrl = await upload(profilePictureFile)
+        const profilePictureUrl = await uploadMedia(profilePictureFile)
         if (profilePictureUrl?.data?.path) {
           updatedUser.profile_picture_url = profilePictureUrl?.data?.path
         }
