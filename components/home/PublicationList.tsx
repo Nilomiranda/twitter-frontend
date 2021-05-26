@@ -13,14 +13,22 @@ const PublicationList = () => {
     return <h2>Error loaading tweets</h2>
   }
 
+  const handleScroll = (e) => {
+    const percentageScrolled = Math.round(((e.target.scrollTop + e.target.offsetHeight) / e.target.scrollHeight) * 100) // 27%, 43%, etc.
+    console.log('percentageScrolled', percentageScrolled)
+    if (percentageScrolled > 85) {
+      console.log('WILL LOAD NEXT PAGE')
+    }
+  }
+
   return (
-    <ul>
+    <Box as="ul" height="100%" overflowX="hidden" onScroll={handleScroll} px={12}>
       {data?.feed?.map((publication) => (
         <Box mb={4} key={publication?.id}>
           <PublicationCard publication={publication} loading={isFetching} />
         </Box>
       ))}
-    </ul>
+    </Box>
   )
 }
 
