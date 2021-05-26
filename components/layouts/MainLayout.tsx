@@ -9,7 +9,7 @@ const MainLayout = ({ children }) => {
 
   return (
     <Flex direction="column" alignItems="center" as="main" w="100%" h="100%" pt="2rem">
-      <Flex w="100%" height="100%" justifyContent="center" alignItems="flex-start">
+      <Flex w="100%" height="100%" justifyContent="center" alignItems="stretch">
         <Box w="25%">
           <UserProfileInfo user={userContext?.user} withSignOutButton withEditProfileButton />
         </Box>
