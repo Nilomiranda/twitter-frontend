@@ -12,9 +12,12 @@ import ProfilePicturePicker from './ProfilePicturePicker'
 interface EditProfileModalProps {
   isOpen: boolean
   onClose: () => void
+  onlyPictureUpload?: boolean
+  title?: string
+  cancelButtonLabel?: string
 }
 
-const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
+const EditProfileModal = ({ isOpen, onClose, onlyPictureUpload, title, cancelButtonLabel }: EditProfileModalProps) => {
   const userContext = useContext(UserContext)
   const toast = useToast()
   const [newDesiredProfilePicture, setNewProfilePicture] = useState(null)
@@ -55,18 +58,18 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Edit profile</ModalHeader>
+        <ModalHeader>{title}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Flex direction="column" alignItems="center">
             <ProfilePicturePicker onPictureChosen={(chosenPictureReference) => setNewProfilePicture(chosenPictureReference)} />
-            <EditUserForm />
+            {!onlyPictureUpload && <EditUserForm />}
           </Flex>
         </ModalBody>
 
         <ModalFooter>
           <Button variant="ghost" colorScheme="green" onClick={onClose} mr={4}>
-            Cancel
+            {cancelButtonLabel}
           </Button>
           <Button colorScheme="green" onClick={handleSaveClick} isLoading={updatingProfile} disabled={updatingProfile}>
             Save
@@ -75,6 +78,12 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
       </ModalContent>
     </Modal>
   )
+}
+
+EditProfileModal.defaultProps = {
+  onlyPictureUpload: false,
+  title: 'Edit profile',
+  cancelButtonLabel: 'Cancel',
 }
 
 export default EditProfileModal

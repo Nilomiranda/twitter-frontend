@@ -4,6 +4,7 @@ import NextLink from 'next/link'
 import { useMutation } from 'react-query'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
+import { useContext } from 'react'
 import { authGuard } from '../guards/auth'
 import { createUser, SignUpPayload } from '../services/user'
 import { User } from '../interfaces/user'
@@ -13,6 +14,7 @@ import { Session } from '../interfaces/session'
 import { signIn } from '../services/session'
 import { queryClient } from '../config/queryClient'
 import Input from '../components/form/Input'
+import { UserContext } from '../contexts/CurrentUser'
 
 type SignUpInputs = {
   email: string
@@ -26,6 +28,8 @@ export async function getServerSideProps({ req }) {
 }
 
 const SignUp = () => {
+  const userContext = useContext(UserContext)
+
   const toast = useToast()
 
   const {
@@ -49,6 +53,7 @@ const SignUp = () => {
       })
       if (loginResponse) {
         await queryClient.refetchQueries('sessions')
+        userContext.setIsNewAccount(true)
         router.push('/home')
       }
     } catch (err) {

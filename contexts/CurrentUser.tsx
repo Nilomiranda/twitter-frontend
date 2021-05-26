@@ -1,15 +1,30 @@
-import { createContext } from 'react'
+import { createContext, useState } from 'react'
 import { useQuery } from 'react-query'
 import { User } from '../interfaces/user'
 
-export const UserContext = createContext<{ user: User }>({
+interface UserContextTypes {
+  user: User
+  newAccount: boolean
+  // eslint-disable-next-line no-unused-vars
+  setIsNewAccount: (value?: boolean) => void
+}
+
+export const UserContext = createContext<UserContextTypes>({
   user: null,
+  newAccount: false,
+  setIsNewAccount: () => null,
 })
 
 const UserProvider = ({ children }) => {
+  const [isNewAccount, setIsNewAccount] = useState(false)
+
   const { data: userData } = useQuery<{ user: User }>('sessions')
 
-  return <UserContext.Provider value={{ user: userData?.user }}>{children}</UserContext.Provider>
+  const toggleNewAccountCreated = (value: boolean) => {
+    setIsNewAccount(value)
+  }
+
+  return <UserContext.Provider value={{ user: userData?.user, newAccount: isNewAccount, setIsNewAccount: toggleNewAccountCreated }}>{children}</UserContext.Provider>
 }
 
 export default UserProvider
