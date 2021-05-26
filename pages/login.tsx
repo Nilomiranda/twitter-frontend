@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, Heading, Text, useToast } from '@chakra-ui/react'
+import { Box, Button, FormControl, Heading, Text, useToast, Image, Flex } from '@chakra-ui/react'
 import Head from 'next/head'
 import NextLink from 'next/link'
 import { useForm } from 'react-hook-form'
@@ -87,9 +87,12 @@ const Login = () => {
       </Head>
 
       <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column" h="100vh" w="100%">
-        <Heading as="h1" size="4xl" isTruncated mb={4}>
-          Chist
-        </Heading>
+        <Flex direction="column" alignItems="center">
+          <Image src="https://i.imgur.com/FeuUYsF.png" alt="Chist Logo" />
+          <Heading as="h1" size="4xl" isTruncated mb={4}>
+            Chist
+          </Heading>
+        </Flex>
         <Heading as="h2" size="sm" fontWeight="normal" isTruncated mb={16}>
           Log in to your account
         </Heading>
