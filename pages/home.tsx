@@ -1,4 +1,5 @@
 import { useContext } from 'react'
+import Head from 'next/head'
 import Feed from '../components/home/Feed'
 import MainLayout from '../components/layouts/MainLayout'
 import { UserContext } from '../contexts/CurrentUser'
@@ -13,6 +14,10 @@ export default function Home() {
 
   return (
     <MainLayout>
+      <Head>
+        <title>Chist | Home</title>
+      </Head>
+
       <Feed />
 
       <EditProfileModal onClose={handleModalCloseClick} isOpen={userContext.newAccount} onlyPictureUpload title="How about a cool looking profile picture?" cancelButtonLabel="Nah, I'll do it later" />
