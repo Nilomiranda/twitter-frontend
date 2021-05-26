@@ -12,7 +12,7 @@ const defaultQueryFunction = async ({ queryKey }) => {
     const { data } = await httpClient.get(typeof queryKey === 'object' ? queryKey[0] : queryKey)
     return data
   } catch (err) {
-    if (err?.response?.status === 401) {
+    if (err?.response?.status === 401 && !Router.pathname.includes('login') && !Router.pathname.includes('sign-up')) {
       await Router.push('/login')
     }
   }
