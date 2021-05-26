@@ -22,9 +22,9 @@ const UserPage = () => {
         <title>Chist | {userData?.user?.nickname}</title>
       </Head>
 
-      <Flex direction="column" alignItems="stretch">
+      <Flex direction="column" alignItems="stretch" height="100%">
         <IconButton variant="link" size="lg" alignSelf="flex-start" aria-label="Search database" icon={<ArrowBackIcon />} onClick={handleBackClick} mb={8} />
-        <Box mb={16}>
+        <Box mb={16} px={12}>
           <UserProfileInfo user={userData?.user} withOtherUserToolbar />
         </Box>
         <Feed />
