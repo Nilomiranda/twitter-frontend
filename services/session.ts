@@ -3,7 +3,7 @@ import { httpClient } from '../config/queryClient'
 import { User } from '../interfaces/user'
 
 export const prefetchSession = async (req): Promise<AxiosResponse<{ user: User }>> =>
-  axios.get<{ user: User }>('http://localhost:3000/sessions', {
+  axios.get<{ user: User }>(`${process.env.API_URL}sessions`, {
     headers: req?.headers,
     withCredentials: true,
   })
