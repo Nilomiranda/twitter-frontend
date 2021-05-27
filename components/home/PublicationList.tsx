@@ -27,9 +27,6 @@ const PublicationList = () => {
   useEffect(() => {
     if (data) {
       setHasNextPage(data?.has_next_page)
-    }
-
-    if (data?.feed?.length) {
       if (currentPage === 1) {
         return setPublications([...data?.feed])
       }
