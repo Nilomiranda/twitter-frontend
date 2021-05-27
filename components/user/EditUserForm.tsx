@@ -28,6 +28,9 @@ const EditUserForm = () => {
     setValue('nickname', userContext?.user?.nickname)
   }, [])
 
+  // todo remove this when component is fully implemented
+  if (true) return null
+
   return (
     <FormControl>
       <form>

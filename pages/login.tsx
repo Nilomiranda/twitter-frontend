@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, Heading, Text, useToast } from '@chakra-ui/react'
+import { Box, Button, FormControl, Heading, Text, useToast, Image, Flex } from '@chakra-ui/react'
 import Head from 'next/head'
 import NextLink from 'next/link'
 import { useForm } from 'react-hook-form'
@@ -31,11 +31,12 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
     trigger,
-    getValues,
     watch,
   } = useForm<LoginInputs>()
   const mutation = useMutation<{ data: Session }, unknown, { email: string; password: string; nickname: string }>(({ email, password, nickname }) => signIn({ email, password, nickname }))
   const router = useRouter()
+
+  console.log(watch('nickname'))
 
   const onSubmit = (event) => {
     event.preventDefault()
@@ -87,9 +88,12 @@ const Login = () => {
       </Head>
 
       <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column" h="100vh" w="100%">
-        <Heading as="h1" size="4xl" isTruncated mb={4}>
-          Chist
-        </Heading>
+        <Flex direction="column" alignItems="center">
+          <Image src="https://i.imgur.com/FeuUYsF.png" alt="Chist Logo" />
+          <Heading as="h1" size="4xl" isTruncated mb={4}>
+            Chist
+          </Heading>
+        </Flex>
         <Heading as="h2" size="sm" fontWeight="normal" isTruncated mb={16}>
           Log in to your account
         </Heading>
@@ -104,17 +108,8 @@ const Login = () => {
                 disabled={!!watch('nickname')}
                 id="email"
                 errors={errors.email && 'This field is required'}
-                {...register('email', {
-                  validate: (email) => {
-                    const nickname = getValues('nickname')
-                    if (nickname || email) {
-                      return true
-                    }
-                    if (!nickname && !email) {
-                      return false
-                    }
-                  },
-                })}
+                name="email"
+                register={register}
               />
             </Box>
 
@@ -129,22 +124,13 @@ const Login = () => {
             <Box mb={4}>
               <Input
                 label="Nickname"
+                name="nickname"
                 placeholder="Your funny nickname"
                 disabled={!!watch('email')}
                 type="text"
                 id="nickname"
                 errors={errors?.nickname && 'This field is required'}
-                {...register('nickname', {
-                  validate: (nickname) => {
-                    const email = getValues('email')
-                    if (!email && !nickname) {
-                      return false
-                    }
-                    if (nickname || email) {
-                      return true
-                    }
-                  },
-                })}
+                register={register}
               />
             </Box>
 
@@ -155,11 +141,12 @@ const Login = () => {
                 type="password"
                 id="password"
                 errors={errors?.password && 'This field is required'}
-                {...register('password', { required: true })}
+                register={register}
+                name="password"
               />
             </Box>
 
-            <Button w="100%" colorScheme="green" type="submit" isLoading={mutation.isLoading}>
+            <Button w="100%" colorScheme="green" type="submit" disabled={mutation?.isLoading} isLoading={mutation.isLoading}>
               Log in
             </Button>
 

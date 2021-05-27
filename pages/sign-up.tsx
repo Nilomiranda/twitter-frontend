@@ -1,9 +1,10 @@
-import { Box, Button, FormControl, Heading, Text, useToast } from '@chakra-ui/react'
+import { Box, Button, Flex, FormControl, Heading, Image, Text, useToast } from '@chakra-ui/react'
 import Head from 'next/head'
 import NextLink from 'next/link'
 import { useMutation } from 'react-query'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/router'
+import { useContext } from 'react'
 import { authGuard } from '../guards/auth'
 import { createUser, SignUpPayload } from '../services/user'
 import { User } from '../interfaces/user'
@@ -13,6 +14,7 @@ import { Session } from '../interfaces/session'
 import { signIn } from '../services/session'
 import { queryClient } from '../config/queryClient'
 import Input from '../components/form/Input'
+import { UserContext } from '../contexts/CurrentUser'
 
 type SignUpInputs = {
   email: string
@@ -26,6 +28,8 @@ export async function getServerSideProps({ req }) {
 }
 
 const SignUp = () => {
+  const userContext = useContext(UserContext)
+
   const toast = useToast()
 
   const {
@@ -33,7 +37,6 @@ const SignUp = () => {
     handleSubmit,
     formState: { errors },
     trigger,
-    getValues,
   } = useForm<SignUpInputs>()
   const router = useRouter()
 
@@ -49,6 +52,7 @@ const SignUp = () => {
       })
       if (loginResponse) {
         await queryClient.refetchQueries('sessions')
+        userContext.setIsNewAccount(true)
         router.push('/home')
       }
     } catch (err) {
@@ -93,9 +97,12 @@ const SignUp = () => {
       </Head>
 
       <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column" h="100vh" w="100%">
-        <Heading as="h1" size="4xl" isTruncated mb={4}>
-          Chist
-        </Heading>
+        <Flex direction="column" alignItems="center">
+          <Image src="https://i.imgur.com/FeuUYsF.png" alt="Chist Logo" />
+          <Heading as="h1" size="4xl" isTruncated mb={4}>
+            Chist
+          </Heading>
+        </Flex>
 
         <Heading as="h2" size="sm" fontWeight="normal" isTruncated mb={16}>
           Create an account
@@ -104,39 +111,24 @@ const SignUp = () => {
         <FormControl maxW="24rem" isInvalid={errors && Object.keys(errors)?.length > 0}>
           <form onSubmit={onSubmit}>
             <Box mb={4}>
-              <Input type="email" placeholder="Your coolest email" {...register('email', { required: true })} label="Email address" errors={errors?.email && 'This field is required'} />
+              <Input type="email" placeholder="Your coolest email" register={register} name="email" label="Email address" errors={errors?.email && 'This field is required'} />
             </Box>
 
             <Box mb={4}>
-              <Input label="Nickname" type="text" placeholder="A creative nickname" {...register('nickname', { required: true })} errors={errors?.nickname && 'This field is required'} />
+              <Input label="Nickname" type="text" placeholder="A creative nickname" register={register} name="nickname" errors={errors?.nickname && 'This field is required'} />
             </Box>
 
             <Box mb={4}>
-              <Input
-                label="Password"
-                type="password"
-                placeholder="Choose a super powerful password"
-                {...register('password', { required: true })}
-                errors={errors?.password && 'This field is required'}
-              />
+              <Input label="Password" type="password" placeholder="Choose a super powerful password" register={register} name="password" errors={errors?.password && 'This field is required'} />
             </Box>
 
-            <Box mb={12}>
-              <Input
-                label="Confirm password"
-                type="password"
-                placeholder="Confirm the super password"
-                {...register('confirmPassword', {
-                  validate(confirmPassword: string) {
-                    const password = getValues('password')
-                    return (password && password === confirmPassword) || 'Confirm password must match with password'
-                  },
-                })}
-                errors={errors?.confirmPassword?.message}
-              />
-            </Box>
+            {false && (
+              <Box mb={12}>
+                <Input label="Confirm password" type="password" placeholder="Confirm the super password" register={register} name="confirmPassword" errors={errors?.confirmPassword?.message} />
+              </Box>
+            )}
 
-            <Button w="100%" colorScheme="green" type="submit">
+            <Button w="100%" colorScheme="green" type="submit" disabled={mutation?.isLoading} isLoading={mutation.isLoading}>
               Create account
             </Button>
 
