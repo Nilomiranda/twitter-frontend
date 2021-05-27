@@ -29,7 +29,7 @@ const PublicationList = () => {
       setHasNextPage(data?.has_next_page)
     }
 
-    if (data?.feed?.length && data?.has_next_page) {
+    if (data?.feed?.length) {
       if (currentPage === 1) {
         return setPublications([...data?.feed])
       }
