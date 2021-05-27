@@ -37,7 +37,6 @@ const SignUp = () => {
     handleSubmit,
     formState: { errors },
     trigger,
-    getValues,
   } = useForm<SignUpInputs>()
   const router = useRouter()
 
@@ -112,39 +111,24 @@ const SignUp = () => {
         <FormControl maxW="24rem" isInvalid={errors && Object.keys(errors)?.length > 0}>
           <form onSubmit={onSubmit}>
             <Box mb={4}>
-              <Input type="email" placeholder="Your coolest email" {...register('email', { required: true })} label="Email address" errors={errors?.email && 'This field is required'} />
+              <Input type="email" placeholder="Your coolest email" register={register} name="email" label="Email address" errors={errors?.email && 'This field is required'} />
             </Box>
 
             <Box mb={4}>
-              <Input label="Nickname" type="text" placeholder="A creative nickname" {...register('nickname', { required: true })} errors={errors?.nickname && 'This field is required'} />
+              <Input label="Nickname" type="text" placeholder="A creative nickname" register={register} name="nickname" errors={errors?.nickname && 'This field is required'} />
             </Box>
 
             <Box mb={4}>
-              <Input
-                label="Password"
-                type="password"
-                placeholder="Choose a super powerful password"
-                {...register('password', { required: true })}
-                errors={errors?.password && 'This field is required'}
-              />
+              <Input label="Password" type="password" placeholder="Choose a super powerful password" register={register} name="password" errors={errors?.password && 'This field is required'} />
             </Box>
 
-            <Box mb={12}>
-              <Input
-                label="Confirm password"
-                type="password"
-                placeholder="Confirm the super password"
-                {...register('confirmPassword', {
-                  validate(confirmPassword: string) {
-                    const password = getValues('password')
-                    return (password && password === confirmPassword) || 'Confirm password must match with password'
-                  },
-                })}
-                errors={errors?.confirmPassword?.message}
-              />
-            </Box>
+            {false && (
+              <Box mb={12}>
+                <Input label="Confirm password" type="password" placeholder="Confirm the super password" register={register} name="confirmPassword" errors={errors?.confirmPassword?.message} />
+              </Box>
+            )}
 
-            <Button w="100%" colorScheme="green" type="submit">
+            <Button w="100%" colorScheme="green" type="submit" disabled={mutation?.isLoading} isLoading={mutation.isLoading}>
               Create account
             </Button>
 

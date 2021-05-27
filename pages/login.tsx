@@ -31,11 +31,12 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
     trigger,
-    getValues,
     watch,
   } = useForm<LoginInputs>()
   const mutation = useMutation<{ data: Session }, unknown, { email: string; password: string; nickname: string }>(({ email, password, nickname }) => signIn({ email, password, nickname }))
   const router = useRouter()
+
+  console.log(watch('nickname'))
 
   const onSubmit = (event) => {
     event.preventDefault()
@@ -107,17 +108,8 @@ const Login = () => {
                 disabled={!!watch('nickname')}
                 id="email"
                 errors={errors.email && 'This field is required'}
-                {...register('email', {
-                  validate: (email) => {
-                    const nickname = getValues('nickname')
-                    if (nickname || email) {
-                      return true
-                    }
-                    if (!nickname && !email) {
-                      return false
-                    }
-                  },
-                })}
+                name="email"
+                register={register}
               />
             </Box>
 
@@ -132,22 +124,13 @@ const Login = () => {
             <Box mb={4}>
               <Input
                 label="Nickname"
+                name="nickname"
                 placeholder="Your funny nickname"
                 disabled={!!watch('email')}
                 type="text"
                 id="nickname"
                 errors={errors?.nickname && 'This field is required'}
-                {...register('nickname', {
-                  validate: (nickname) => {
-                    const email = getValues('email')
-                    if (!email && !nickname) {
-                      return false
-                    }
-                    if (nickname || email) {
-                      return true
-                    }
-                  },
-                })}
+                register={register}
               />
             </Box>
 
@@ -158,11 +141,12 @@ const Login = () => {
                 type="password"
                 id="password"
                 errors={errors?.password && 'This field is required'}
-                {...register('password', { required: true })}
+                register={register}
+                name="password"
               />
             </Box>
 
-            <Button w="100%" colorScheme="green" type="submit" isLoading={mutation.isLoading}>
+            <Button w="100%" colorScheme="green" type="submit" disabled={mutation?.isLoading} isLoading={mutation.isLoading}>
               Log in
             </Button>
 

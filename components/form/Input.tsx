@@ -12,15 +12,17 @@ interface InputProps {
   disabled?: boolean
   id?: string
   className?: string
+  name?: string
+  register?: any
 }
 
-const Input = forwardRef(({ label, placeholder, errors, value, onChange, type, id, className, disabled, ...props }: InputProps, ref) => (
+const Input = forwardRef(({ label, placeholder, errors, value, onChange, type, id, className, disabled, name, register }: InputProps) => (
   <Box>
     {label ? <FormLabel>{label}</FormLabel> : null}
     {!value ? (
-      <ChakraInput data-what="not-controlled" ref={ref} type={type} placeholder={placeholder} disabled={disabled} id={id} className={className} {...props} />
+      <ChakraInput {...register(name)} type={type} placeholder={placeholder} disabled={disabled} id={id} className={className} />
     ) : (
-      <ChakraInput data-what="controlled" ref={ref} type={type} placeholder={placeholder} disabled={disabled} id={id} className={className} value={value} onChange={onChange} />
+      <ChakraInput type={type} placeholder={placeholder} disabled={disabled} id={id} className={className} value={value} onChange={onChange} />
     )}
     {errors && <FormErrorMessage>{errors}</FormErrorMessage>}
   </Box>
