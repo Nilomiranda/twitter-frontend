@@ -37,6 +37,7 @@ const SignUp = () => {
     handleSubmit,
     formState: { errors },
     trigger,
+    getValues,
   } = useForm<SignUpInputs>()
   const router = useRouter()
 
@@ -111,22 +112,63 @@ const SignUp = () => {
         <FormControl maxW="24rem" isInvalid={errors && Object.keys(errors)?.length > 0}>
           <form onSubmit={onSubmit}>
             <Box mb={4}>
-              <Input type="email" placeholder="Your coolest email" register={register} name="email" label="Email address" errors={errors?.email && 'This field is required'} />
+              <Input
+                type="email"
+                placeholder="Your coolest email"
+                register={register}
+                name="email"
+                label="Email address"
+                validationRules={{
+                  required: 'required',
+                  pattern: {
+                    value: /\S+@\S+\.\S+/,
+                    message: 'Entered value does not match email format',
+                  },
+                }}
+                errors={errors?.email && 'This field is required'}
+              />
             </Box>
 
             <Box mb={4}>
-              <Input label="Nickname" type="text" placeholder="A creative nickname" register={register} name="nickname" errors={errors?.nickname && 'This field is required'} />
+              <Input
+                label="Nickname"
+                type="text"
+                placeholder="A creative nickname"
+                register={register}
+                validationRules={{ required: true }}
+                name="nickname"
+                errors={errors?.nickname && 'This field is required'}
+              />
             </Box>
 
             <Box mb={4}>
-              <Input label="Password" type="password" placeholder="Choose a super powerful password" register={register} name="password" errors={errors?.password && 'This field is required'} />
+              <Input
+                label="Password"
+                type="password"
+                placeholder="Choose a super powerful password"
+                register={register}
+                name="password"
+                validationRules={{ required: true }}
+                errors={errors?.password && 'This field is required'}
+              />
             </Box>
 
-            {false && (
-              <Box mb={12}>
-                <Input label="Confirm password" type="password" placeholder="Confirm the super password" register={register} name="confirmPassword" errors={errors?.confirmPassword?.message} />
-              </Box>
-            )}
+            <Box mb={12}>
+              <Input
+                label="Confirm password"
+                type="password"
+                placeholder="Confirm the super password"
+                register={register}
+                name="confirmPassword"
+                validationRules={{
+                  validate(confirmPassword: string) {
+                    const password = getValues('password')
+                    return (password && password === confirmPassword) || 'Confirm password must match with password'
+                  },
+                }}
+                errors={errors?.confirmPassword?.message}
+              />
+            </Box>
 
             <Button w="100%" colorScheme="green" type="submit" disabled={mutation?.isLoading} isLoading={mutation.isLoading}>
               Create account
