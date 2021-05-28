@@ -10,7 +10,9 @@ const PublicationList = () => {
   const { userId } = router?.query
   const [currentPage, setCurrentPage] = useState(1)
   const [hasNextPage, setHasNextPage] = useState(true)
-  const { data, error, isFetching } = useQuery<{ feed: Tweet[]; has_next_page: boolean }>(userId ? `feed?user_id=${userId}&page=${currentPage}` : `feed?page=${currentPage}`, { enabled: hasNextPage })
+  const { data, error, isFetching } = useQuery<{ feed: Tweet[]; has_next_page: boolean }>(userId ? `feed?user_id=${userId}&page=${currentPage}` : ['feed', { page: currentPage }], {
+    enabled: hasNextPage,
+  })
   const [publications, setPublications] = useState<Tweet[]>([])
 
   if (error) {
