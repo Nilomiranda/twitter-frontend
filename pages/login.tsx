@@ -110,6 +110,13 @@ const Login = () => {
                 errors={errors.email && 'This field is required'}
                 name="email"
                 register={register}
+                validationRules={{
+                  required: 'required',
+                  pattern: {
+                    value: /\S+@\S+\.\S+/,
+                    message: 'Entered value does not match email format',
+                  },
+                }}
               />
             </Box>
 
