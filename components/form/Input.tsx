@@ -14,13 +14,14 @@ interface InputProps {
   className?: string
   name?: string
   register?: any
+  validationRules?: any
 }
 
-const Input = forwardRef(({ label, placeholder, errors, value, onChange, type, id, className, disabled, name, register }: InputProps) => (
+const Input = forwardRef(({ label, placeholder, errors, value, onChange, type, id, className, disabled, name, register, validationRules }: InputProps) => (
   <Box>
     {label ? <FormLabel>{label}</FormLabel> : null}
     {!value ? (
-      <ChakraInput {...register(name)} type={type} placeholder={placeholder} disabled={disabled} id={id} className={className} />
+      <ChakraInput {...register(name, validationRules)} type={type} placeholder={placeholder} disabled={disabled} id={id} className={className} />
     ) : (
       <ChakraInput type={type} placeholder={placeholder} disabled={disabled} id={id} className={className} value={value} onChange={onChange} />
     )}
@@ -38,6 +39,7 @@ Input.defaultProps = {
   disabled: false,
   id: '',
   className: '',
+  validationRules: undefined,
 }
 
 export default Input
