@@ -32,6 +32,7 @@ const Login = () => {
     formState: { errors },
     trigger,
     watch,
+    getValues,
   } = useForm<LoginInputs>()
   const mutation = useMutation<{ data: Session }, unknown, { email: string; password: string; nickname: string }>(({ email, password, nickname }) => signIn({ email, password, nickname }))
   const router = useRouter()
@@ -111,7 +112,7 @@ const Login = () => {
                 name="email"
                 register={register}
                 validationRules={{
-                  required: 'required',
+                  required: !getValues('nickname'),
                   pattern: {
                     value: /\S+@\S+\.\S+/,
                     message: 'Entered value does not match email format',
@@ -136,6 +137,9 @@ const Login = () => {
                 disabled={!!watch('email')}
                 type="text"
                 id="nickname"
+                validationRules={{
+                  required: !getValues('email'),
+                }}
                 errors={errors?.nickname && 'This field is required'}
                 register={register}
               />
