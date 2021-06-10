@@ -1,13 +1,14 @@
 import { Flex, Skeleton, IconButton, useToast, Box } from '@chakra-ui/react'
 import { DeleteIcon } from '@chakra-ui/icons'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { Tweet } from '../../interfaces/tweet'
-import { deletePublication } from '../../services/publication'
+import { deletePublication, likePublication, unlikePublication } from '../../services/publication'
 import { translateErrors } from '../../utils/translateErrors'
 import { TOAST_DEFAULT_DURATION } from '../../config/constants'
 import { queryClient } from '../../config/queryClient'
 import UserHeader from '../user/UserHeader'
 import { UserContext } from '../../contexts/CurrentUser'
+import HeartIcon from '../../icons/HeartIcon'
 
 interface PublicationCardProps {
   loading: boolean
@@ -17,6 +18,8 @@ interface PublicationCardProps {
 const PublicationCard = ({ publication, loading }: PublicationCardProps) => {
   const toast = useToast()
   const userContext = useContext(UserContext)
+
+  const [innerPublication, setInnerPublication] = useState<Tweet>(publication)
 
   const handleDeletionSuccess = () => {
     toast({
@@ -39,14 +42,41 @@ const PublicationCard = ({ publication, loading }: PublicationCardProps) => {
   }
 
   const handleDeleteClick = async () => {
-    if (!publication?.id) return
+    if (!innerPublication?.id) return
 
     try {
-      await deletePublication(publication?.id)
+      await deletePublication(innerPublication?.id)
       handleDeletionSuccess()
     } catch (err) {
       console.error('ERROR: Could not delete publication', err)
       handleDeletionError(err)
+    }
+  }
+
+  const handleUnlikePublication = async () => {
+    try {
+      setInnerPublication((previousPublicationState) => ({ ...previousPublicationState, liked: false }))
+      unlikePublication(innerPublication?.id)
+    } catch (err) {
+      console.error('Error unliking', err)
+      setInnerPublication((previousPublicationState) => ({ ...previousPublicationState, liked: true }))
+    }
+  }
+
+  const handleLikePublication = async () => {
+    try {
+      setInnerPublication((previousPublicationState) => ({ ...previousPublicationState, liked: true }))
+      likePublication(innerPublication?.id)
+    } catch (err) {
+      setInnerPublication((previousPublicationState) => ({ ...previousPublicationState, liked: false }))
+    }
+  }
+
+  const handleLikeClick = () => {
+    if (innerPublication?.liked) {
+      handleUnlikePublication()
+    } else {
+      handleLikePublication()
     }
   }
 
@@ -58,16 +88,20 @@ const PublicationCard = ({ publication, loading }: PublicationCardProps) => {
             <Skeleton height="1.25rem" w="10rem" mb={4} />
           ) : (
             <Box mb={4}>
-              <UserHeader user={publication?.user} />
+              <UserHeader user={innerPublication?.user} />
             </Box>
           )}
         </Flex>
       </Flex>
-      {loading ? <Skeleton height="1.25rem" /> : <p>{publication?.text}</p>}
+      {loading ? <Skeleton height="1.25rem" /> : <p>{innerPublication?.text}</p>}
 
-      {userContext?.user?.id === publication?.user?.id ? (
-        <IconButton onClick={handleDeleteClick} aria-label="Delete publication" title="Delete publication" variant="ghost" alignSelf="flex-end" colorScheme="red" icon={<DeleteIcon />} />
-      ) : null}
+      <Flex alignItems="center">
+        <IconButton onClick={handleLikeClick} variant="ghost" aria-label="Search database" icon={<HeartIcon liked={innerPublication?.liked} />} />
+
+        {userContext?.user?.id === innerPublication?.user?.id ? (
+          <IconButton onClick={handleDeleteClick} aria-label="Delete publication" title="Delete publication" variant="ghost" ml="auto" colorScheme="red" icon={<DeleteIcon />} />
+        ) : null}
+      </Flex>
     </Flex>
   )
 }
